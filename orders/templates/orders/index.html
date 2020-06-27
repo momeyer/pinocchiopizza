@@ -1,0 +1,333 @@
+{% extends "orders/layout.html" %}
+{% load static %}
+
+{% block modal %}
+<div class="modal fade" id="login_modal" tabindex="-1" role="dialog" aria-labelledby="modelTitleId" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Login</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form action="{% url 'login' %}" method="post">
+                    <div class="form-group">
+                        {% csrf_token %}
+                        <label for="username">username</label>
+                        <input type="text" class="form-control" name="username">
+                    </div>
+                    <div class="form-group">
+                        <label for="password">Password</label>
+                        <input type="password" class="form-control" name="password" id="password">
+                    </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <input type="submit" class="btn btn-secondary" value="Login" />
+            </div>
+            </form>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="registration_modal" tabindex="-1" role="dialog" aria-labelledby="" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Registration form</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form action="{% url 'register' %}" method="post">
+                    <div class="form-row">
+                        <div class="form-group col-md-6">
+                            {% csrf_token %}
+                            <label for="fname">First Name</label>
+                            <input type="text" class="form-control" name="fname" id="fname">
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label for="lname">Last Name</label>
+                            <input type="text" class="form-control" name="lname" id="lname">
+                        </div>
+
+                        <div class="form-group col-md-12">
+                            <label for="email">Email</label>
+                            <input type="email" class="form-control" name="email" id="email">
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label for="username">username</label>
+                            <input type="username" class="form-control" name="username" id="username">
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label for="password_registration">Password</label>
+                            <input type="password" class="form-control" name="password" id="password_registration">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="address">Address</label>
+                        <input type="text" class="form-control" id="address" name="address" placeholder="1234 Main St">
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col-md-6">
+                            <label for="city">City</label>
+                            <input type="text" class="form-control" name="city" id="city">
+                        </div>
+                        <div class="form-group col-md-4">
+                            <label for="state">State</label>
+                            <input type="text" class="form-control" name="state" id="state">
+                        </div>
+                        <div class="form-group col-md-2">
+                            <label for="zip">Zip</label>
+                            <input type="text" class="form-control" name="zipCode" id="zip">
+                        </div>
+                    </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <input class="btn btn-secondary" type="submit">
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock%}
+
+{% block navContent %}
+
+<ul class="navbar-nav mr-auto">
+    <li class="nav-item active">
+        <a class="nav-link" href="#contact">contact and location<span class="sr-only">(current)</span></a>
+    </li>
+    <div class="btn-group btn-group-toggle" data-toggle="buttons" id="buttons_header">
+        <input type="button" class="btn btn-secondary " data-toggle="modal" data-target="#login_modal" value="login">
+        <input type="button" class="btn btn-secondary " data-toggle="modal" data-target="#registration_modal"
+            value="register">
+    </div>
+</ul>
+{% endblock%}
+
+{% block body %}
+<div class="row">
+    <div class="card mb-3 menu_items">
+        <img src="{% static 'orders/images/sicilian_index_menu.jpg' %}" class="card-img-top" alt="...">
+        <div class="card-body">
+
+            <div class="card-text">
+                <h3>Sicilian Pizza</h3>
+                <div class="row col-md-12">
+                    <p>Our Sicilian pizza is a deep-dish or thick-crust pizza.</p>
+                    <span> The 9-slice (16" x 16") and will feed anywhere from 3 to 5 people.</span>
+                    The 15-slice (28" x 16"), 2 large pizza boxes and can feed 6 to 9 people.
+                </div>
+                <div class="row">
+                    <div class="col-xs-6 pizza_toppings">
+                        {% for top in toppingOptions %}
+                        <div>{{top}}</div>
+                        {% endfor %}
+                    </div>
+                    <div class="col-xs-3 offset-1 pizza_toppings">
+                        {% for sicilian in sicilians %}
+                        <div> {{sicilian.small}} </div>
+                        {% endfor %}
+                    </div>
+                    <div class="col-xs-3 offset-1 pizza_toppings">
+                        {% for sicilian in sicilians %}
+                        <div> {{sicilian.large|floatformat:2}}  </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                <div class="row col-md-12">
+                    <h3>Toppings</h3>
+                    <p> {% for topping in toppings %}
+                        <span> {{ topping }} / </span>
+                        {% endfor %}
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="card mb-3 menu_items">
+        <img src="{% static 'orders/images/regular_index_menu.jpg' %}" class="card-img-top" alt="...">
+        <div class="card-body">
+
+            <div class="card-text">
+                <h3>Regular Pizza</h3>
+                <div class="row col-md-12">
+                    <p>Our Regular pizza is a thin-crust or Neapolitan pizza. </p>
+                    <p>The small is suitable for 1 to 2 people (12" in diameter)
+                        The large feeds 2 to 4 people. (16" in diameter)</p>
+                </div>
+                <div class="row">
+                    <div class="col-xs-6 pizza_toppings" >
+                        {% for top in toppingOptions %}
+                        <div>{{top}}</div>
+                        {% endfor %}
+                    </div>
+                    <div class="col-xs-3 offset-1 pizza_toppings">
+                        {% for regular in regulars %}
+                        <div> {{regular.small|floatformat:2}} </div>
+                        {% endfor %}
+                    </div>
+                    <div class="col-xs-3 offset-1 pizza_toppings">
+                        {% for regular in regulars %}
+                        <div> {{regular.large|floatformat:2}}  </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                <div class="row col-md-12">
+                    <h3>Toppings</h3>
+                    <p> {% for topping in toppings %}
+                        <span> {{ topping }} / </span>
+                        {% endfor %}
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row ">
+    <div class="card mb-3 menu_items">
+        <img src="{% static 'orders/images/sub_index_menu.jpg' %}" class="card-img-top" alt="...">
+        <div class="card-body">
+            <div class="card-text">
+                <h3>Subs</h3>
+                <div class="row">
+                    <div class="col-xs-2 sub_menu">
+                        {% for sub in subs %}
+                        <div>{{sub}}</div>
+                        {% endfor %}
+                    </div>
+                    <div class="col-xs-3 sub_menu">
+                        {% for sub in subs %}
+                        <div>{% if sub.small == 0.0 %}-{% else%}{{sub.small|floatformat:2}}{% endif %}</div>
+                        {% endfor %}
+                    </div>
+                    <div class="col-xs-3 sub_menu">
+                        {% for sub in subs %}
+                        <div> {% if sub.large == 0.0 %}-{% else%}{{sub.large|floatformat:2}}{% endif %} </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                <h3> Extra </h3>
+                <div class="row">
+                    <div class="col-xs-6 extra_menu">
+                        {% for extra in extras %}
+                        <div>{{extra.extra}}</div>
+                        {% endfor %}
+                    </div>
+                    <div class="col-xs-6 offset-3 extra_menu">
+                        {%for extra in extras%}
+                        <div>{{extra.price|floatformat:2 }} </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="card mb-3 menu_items">
+        <img src="{%  static 'orders/images/pasta_index_menu.jpg' %}" class="card-img-top" alt="...">
+        <div class="card-body">
+
+            <div class="card-text">
+                <h3>Pasta</h3>
+                <div class="row">
+                    <div class="col-xs-6 pasta_menu">
+                        {% for pasta in pastas %}
+                        <div>{{pasta}}</div>
+                        {% endfor %}
+                    </div>
+                    <div class="col-xs-3 offset-1 pasta_menu">
+                        {% for pasta in pastas %}
+                        <div>{{pasta.price|floatformat:2}}</div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row ">
+    <div class="card mb-3 menu_items">
+        <img src="{% static 'orders/images/salad_index_menu.jpg' %}" class="card-img-top" alt="...">
+        <div class="card-body">
+
+            <div class="card-text">
+                <h3>Salads</h3>
+                <div class="row">
+                    <div class="col-xs-6 salad_menu">
+                        {% for salad in salads %}
+                        <div>{{salad}}</div>
+                        {% endfor %}
+                    </div>
+                    <div class="col-xs-3 offset-3 salad_menu">
+                        {% for salad in salads %}
+                        <div>{{ salad.price|floatformat:2 }}</div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="card mb-3 menu_items">
+        <img src="{%  static 'orders/images/dinner_index_menu.jpg'  %}" class="card-img-top" alt="..." style="max-height: 200px;">
+        <div class="card-body">
+
+            <div class="card-text">
+                <h3>Dinner Platters</h3>
+                <div class="row">
+                    <div class="col-xs-6 dinner_menu" >
+                        {% for dinner in dinnerPlates %}
+                        <div>{{dinner}}</div>
+                        {% endfor %}
+                    </div>
+                    <div class="col-xs-3 offset-3 dinner_menu">
+                        {% for dinner in dinnerPlates %}
+                        <div>{{ dinner.small|floatformat:2 }} </div>
+                        {% endfor %}
+                    </div>
+                    <div class="col-xs-3 offset-1 dinner_menu">
+                        {% for dinner in dinnerPlates %}
+                        <div>{{ dinner.large|floatformat:2 }} </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="contact" class="row menu_items">
+    <div class="col-md-5 " style="padding: 0%;">
+        <a href="https://www.google.com/maps/place/Pinocchio's+Pizza+%26+Subs/@42.3719941,-71.1225542,17z/data=!4m13!1m7!3m6!1s0x89e3775d51d69b07:0xa4d76bff98604ad5!2s74+Winthrop+St,+Cambridge,+MA+02138!3b1!8m2!3d42.3719941!4d-71.1203655!3m4!1s0x89e3775d4e48fa43:0xcab27982991e9fe3!8m2!3d42.3720081!4d-71.1202842"><img src="{%  static 'orders/images/map_index.gif'  %}" class="card-img" alt="..." style="max-width: 520px; height: 90%; margin-bottom: 50px;"></a>
+    </div>
+    <div class="col-md-5 ">
+        <div class="row">
+            <div class="col-md-9" id="contact_info">
+                <div class="row">
+                    <div class="col-md-4">
+                        <img id="logo_map" src="{% static 'orders/images/white_logo.png' %}" width="100%" alt=""> 
+                    </div>
+                    <div class="col-md-8">
+                    <p>Sunday - 1 pm-12 midnight</p>
+                   <p> Monday - Thursday 11 am-1am</p>
+                    <p>Friday - Saturday 11 am-2:30am</p>
+                    </div>
+                </div>
+                
+                <h5>Contact: </h5>
+                <p>Telefone: 617-876-4897 or 617-876-0012</p>
+                <p>Fax: 617-661-6188</p>
+                <p>Twitter: @PinocchiosPizz</p>
+                <p>Instagram: @pinocchiospizza1</p>
+                <p>Email: pinocchiospizza1@gmail.com</p>
+                <p>address: Pinocchio's Pizza 74 Winthrop Street Cambridge, MA 02138</p>
+            </div>
+        </div>
+    </div>            
+</div>
+{% endblock%}

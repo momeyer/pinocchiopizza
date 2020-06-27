@@ -1,0 +1,267 @@
+body {
+  overflow-x: hidden;
+  font-size: medium;
+  background-color: #101010;
+  color: #cccccc;
+}
+#buttons_header {
+  position: absolute;
+  right: 10px;
+  top: 15px;
+}
+#logo {
+  position: absolute;
+  top: 30%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 25vw;
+}
+
+#logo_map{
+  margin-bottom: 30px ;
+}
+
+#header_image {
+  width: 100vw;
+}
+
+#login_nav {
+  margin-left: 150px;
+}
+
+h3{
+  margin-left: 20px;
+}
+
+.delivery_info{
+  color: white;
+  font-size: large;
+  margin: 15px;
+  text-align: center;
+}
+
+.pizza_toppings{
+  padding-left: 30px;
+  padding-right: 15px;
+  padding-top: 10px;
+}
+.sub_menu, .extra_menu, .pasta_menu, .dinner_menu, .salad_menu{
+  padding-right: 15px;
+  padding-top: 10px;
+  padding-left: 40px;
+}
+
+#navbar{
+  background-color: #303030 !important;
+}
+
+.modal-content {
+  background-color: rgba(15, 15, 15, 0.7) !important;
+}
+.close {
+  color: white;
+}
+
+.size_div{
+  margin-left: 30px;
+}
+#cart{
+  position: fixed;
+}
+
+#cart_items_div{
+  padding-right: 15px;
+  padding-top: 10px;
+  padding-left: 40px;
+}
+
+
+#username_cart_div{
+  margin-left: 20px;
+}
+
+#modal_items{
+  background-color:#3b3b3b;
+  border-radius: 3%;
+  margin: 15px;
+  padding: 15px;
+  max-width: 350px;
+  width: 350px;
+  overflow-y: scroll;
+  max-height: 390px;
+}
+
+::-webkit-scrollbar {
+  width: 1px;
+}
+::-webkit-scrollbar-track {
+  background: #3b3b3b; 
+}
+::-webkit-scrollbar-thumb {
+  background: #888; 
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #555; 
+}
+.sub_price{
+  margin-left: 45px;
+  padding-top: 15px;
+}
+
+#contact_info{
+  margin-left: 100px;
+}
+
+#checkout_items_modal {
+  padding-left: 30px;
+  padding-right: 15px;
+  padding-top: 10px;
+}
+
+#checkout_prices_modal {
+  padding-top: 10px;
+  margin-right: 15px;
+  margin-bottom: 15px;
+}
+
+#checkout_total_modal {
+  text-align: left;
+  left: 5%;
+  position: absolute;
+}
+.card-body,
+.card {
+  max-width: 540px;
+  background-color: rgb(40, 40, 40) !important;
+  color: white;
+}
+.trash {
+  background-color: #3b3b3b;
+  border: #3b3b3b;
+}
+
+.card-img{
+  height: 260px; 
+}
+#row_content {
+  margin-top: 15px;
+  margin-left: 10px;
+  overflow-y: scroll;
+}
+
+#body_section
+{
+  max-height: 88vh;
+  overflow-y: scroll;
+  overflow-x: hidden;
+}
+
+#total_div {
+  position: fixed;
+  bottom:0%;
+  padding-bottom: 30px;
+  background-color: #303030;
+  width: 92%;
+  height: 20vh;
+}
+
+#total{
+  margin-top: 4%;
+  margin-left: 7%;
+  font-size: 50px;
+}
+
+#checkout_button {
+  position: fixed;
+  right: 0px;
+  height: 20vh;
+}
+
+#cart {
+  background-color: #3b3b3b;
+  border-radius: 2%;
+  height: 112vh;
+  padding: 15px;
+}
+
+#cart_row{
+  width: 470px;
+  overflow-y: scroll;
+  max-height: 55vh;
+}
+
+.menu_items{
+  margin-top: 30px;
+  margin-left: 7vw;
+ }
+
+
+#modal_item_div > button{
+  background-color:rgba(15,15,15, .70);
+}
+
+@media only screen and (max-width: 414px) {
+  
+  .card-img{
+    height: 490px;
+  }
+
+  #navbar_div{
+    width: 105vw;
+  }
+  #contact_info{
+    margin-top: 0px;
+    margin-bottom: 30px;
+    margin-left: 50px;
+  }
+  
+  .pizza_toppings{
+    padding-left: 15px;
+    padding-right: 5px;
+    padding-top: 5px;
+  }
+
+  .sub_menu{
+    max-width: 55%;
+    margin-left: 0%;
+  }
+  .dinner_menu{
+    max-width: 55%;
+    margin-left: 0%;
+  }
+
+  .menu_items{
+    margin-right: 0%;
+    margin-top: 20px;
+    margin-left: 5%;
+  }
+
+  #contact_info{
+    margin-left: 10%;
+    margin-bottom: 15%;
+  }
+  #logo_map{
+    margin-bottom: 15%;
+  }
+
+  #checkout_button{
+    height: 15vh;
+    bottom: 0%;
+  }
+  #total_div{
+    left: 0%;
+    width: 100vw;
+    height: 15vh;
+  }
+
+  #total{
+    margin-top: 30px;
+    margin-left: 90px;
+    font-size: 40px;
+  }
+  #dinner_salad{
+    margin-bottom: 15vh;
+  }
+  
+
+}

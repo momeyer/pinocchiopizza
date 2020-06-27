@@ -1,0 +1,511 @@
+{% extends "orders/layout.html" %}
+{% load static %}
+
+
+{% block modal %}
+<script type="text/javascript">
+    var urlOrderPizza = '{% url "orderPizza" %}';
+    var urlOrderSub = "{% url 'orderSub' %}"
+    var urlOrderPasta = "{% url 'orderPasta' %}"
+    var urlOrderDinner = "{% url 'orderDinner' %}"
+    var urlOrderSalad = "{% url 'orderSalad' %}"
+    var urlRemoveItem = "{% url 'removeItem' %}"
+    var urlCheckout = "{% url 'checkout' %}"
+
+</script>
+<div class="modal fade" id="pizza" tabindex="-1" role="dialog" aria-labelledby="pizzaLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="pizzaLabel">Toppings</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                {% csrf_token %}
+                {% for topping in toppings %}
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" name="top_opt" value="{{ topping }}"
+                        id="top_{{topping}}">
+                    <label class="form-check-label" for="top_{{tooping}}">
+                        {{topping}}
+                    </label>
+                </div>
+                {% endfor %}
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="submit" class="btn btn-primary" id="add_pizza">Save to cart</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade bd-example-modal-lg" id="checkoutModal" tabindex="-1" role="dialog"
+    aria-labelledby="checkoutModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content" style="background-color: rgba(15,15,15, .95) !important;">
+            <div class="modal-header">
+                <h5 class="modal-title" id="checkoutModalLabel">Checkout</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-xs-5 items_div" id="modal_items">
+                        {%for item in items%}
+                        <div class="{{item.id}}_item_div">
+                            <div class="modal_item_div" style="margin-top: 5px;">{{item.quantity}}x
+                                {{item.content_object}} US$ {{item.price}}
+                                <button class="trash" id="{{item.id}}" onclick="deleteItem(this.id)">
+                                    <svg class="bi bi-trash" width="1.5em " height="1em" viewBox="0 0 16 16"
+                                        fill="white" xmlns="http://www.w3.org/2000/svg">
+                                        <path
+                                            d="M5.5 5.5A.5.5 0 016 6v6a.5.5 0 01-1 0V6a.5.5 0 01.5-.5zm2.5 0a.5.5 0 01.5.5v6a.5.5 0 01-1 0V6a.5.5 0 01.5-.5zm3 .5a.5.5 0 00-1 0v6a.5.5 0 001 0V6z" />
+                                        <path fill-rule="evenodd"
+                                            d="M14.5 3a1 1 0 01-1 1H13v9a2 2 0 01-2 2H5a2 2 0 01-2-2V4h-.5a1 1 0 01-1-1V2a1 1 0 011-1H6a1 1 0 011-1h2a1 1 0 011 1h3.5a1 1 0 011 1v1zM4.118 4L4 4.059V13a1 1 0 001 1h6a1 1 0 001-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"
+                                            clip-rule="evenodd" />
+                                    </svg>
+                                </button>
+                            </div>
+                            <div class="size_div">{% if item.extras != None %}{{item.extras}}{% endif %}
+                            </div>
+                            <div class="size_div">{% if item.size != None %}size: {{item.size}}{% endif %}
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    <div class="col-xs-5" style="max-width: 400px;">
+                        <div class="form-group col-md-12">
+                            <label> Delivery Information:</label>
+                        </div>
+
+                        <div class="form-row col-md-12">
+                            <div class="form-group col-md-12">
+                                <label for="inputAddress">Address</label>
+                                <input type="text" class="form-control" id="inputAddress"
+                                    placeholder="{{ order.street }}">
+                            </div>
+                        </div>
+                        <div class="form-row col-md-12">
+                            <div class="form-group col-md-4">
+                                <label for="inputCity">City</label>
+                                <input type="text" class="form-control" id="inputCity" placeholder="{{ order.city }}">
+                            </div>
+                            <div class="form-group col-md-5">
+                                <label for="inputState">State</label>
+                                <input type="text" class="form-control" id="inputState" placeholder="{{order.state}}">
+                            </div>
+                            <div class="form-group col-md-3">
+                                <label for="inputZip">Zip</label>
+                                <input type="text" class="form-control" id="inputZip" placeholder="{{order.zipcode}}">
+                            </div>
+                        </div>
+                        <div class="form-row col-md-12">
+                            <div class="form-group col-md-12">
+                                <label for="card-number">card information</label>
+                                <input type="number" class="form-control" placeholder="1234 1234 1234 1234"
+                                    id="card-number">
+                            </div>
+                        </div>
+                        <div class="form-row col-md-12">
+                            <div class="form-group col-md-6">
+                                <input type="month" class="form-control" id="card-date">
+                            </div>
+                            <div class="form-group col-md-6">
+                                <input type="number" class="form-control" placeholder="CVC" id="card-cvc">
+                            </div>
+                        </div>
+                        <div class="form-row col-md-12">
+                            <div class="form-group col-md-12">
+                                <input type="button" class="btn btn-secondary" id="playment" value="Pay"
+                                    style="width: 100%;">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <div id="checkout_total_modal">
+                        <h4>Total:</h4>
+                        <h3>US$ <span class="totalPrice">{{totalPrice}}</span></h3>
+                    </div>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="deliveryInfo" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Delivery Information</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="container-fluid delivery_info">
+                    <div class="col-xs-12">
+                        <div class="row">
+                            <div class="col-xs-12 delivery_info">
+                                <div><h4>Hello, <span id="delivery_name"></span>!</h4></div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-12 delivery_info">
+                                <img src="{% static 'orders/images/delivery.png' %}" width="90%" alt="">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-12 delivery_info" >
+                                <div><h4>Your order will be delivered in <span id="delivery_time"></span>min</h4></div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-12 delivery_info" >
+                                <div><h4>Delivery address: <span id="delivery_address"></span></h4></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock%}
+
+
+{% block navContent %}
+<ul class="navbar-nav mr-auto">
+    <div class="btn-group btn-group-toggle" data-toggle="buttons" id="buttons_header">
+        <a class="btn btn-secondary" href="{% url 'logout' %}">Logout</a>
+    </div>
+</ul>
+{% endblock%}
+
+
+{% block body %}
+
+<div id="body_section">
+    <div class="row" id="row_content">
+        <div class="col-xs-12 col-md-8">
+            <div class="row">
+                <div class="col-xs-12 col-md-6">
+                    <div class="card mb-3">
+                        <div class="row no-gutters">
+                            <div class="col-md-4">
+                                <img src="{% static 'orders/images/regular_order_view.jpg' %}" class="card-img" alt="...">
+                            </div>
+                            <div class="col-md-8">
+                                <div class="card-body">
+                                    <h5 class="card-title">Regular Pizza</h5>
+                                    <p class="card-text">
+                                        <div class="form-row">
+                                            <div class="col-md-6 mb-3">
+                                                <select class="custom-select mr-sm-2" id="regular_toppings"
+                                                    name="regular_toppings">
+                                                    {% for topping in toppingOptions %}
+                                                    <option value="{{ topping }}">{{topping}}</option>
+                                                    {% endfor%}
+                                                </select>
+                                            </div>
+                                            <div class="col-md-6 mb-3">
+                                                <select class="custom-select mr-sm-2" name="size" id="regular_size">
+                                                    {% for size in sizes %}
+                                                    <option value="{{ size }}">{{size}}</option>
+                                                    {% endfor%}
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="form-row">
+                                            <div class="col-md-12 mb-3">
+                                                <input class="form-control" type="number" name="num" placeholder="1"
+                                                    id="regular_qnt" min="1" max="50">
+                                            </div>
+                                        </div>
+                                        <div class="form-row">
+                                            <div class="col-md-6 mb-3">
+                                                <button class="btn btn-secondary" id="add_regular_pizza_button">add
+                                                    to cart</button>
+                                            </div>
+                                        </div>
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xs-12 col-md-6">
+                    <div class="card mb-3">
+                        <div class="row no-gutters">
+                            <div class="col-md-4">
+                                <img src="{% static 'orders/images/sicilian_order_view.jpg' %}" class="card-img" alt="...">
+                            </div>
+                            <div class="col-md-8">
+                                <div class="card-body">
+                                    <h5 class="card-title">Sicilian Pizza</h5>
+                                    <p class="card-text">
+                                        <div class="form-row">
+                                            <div class="col-md-6 mb-3">
+                                                <select class="custom-select mr-sm-2" id="sicilian_toppings"
+                                                    name="sicilian_toppings">
+                                                    {% for topping in toppingOptions %}
+                                                    <option value="{{ topping }}">{{ topping }}</option>
+                                                    {% endfor%}
+                                                </select>
+                                            </div>
+                                            <div class="col-md-6 mb-3">
+                                                <select class="custom-select mr-sm-2" name="size" id="sicilian_size">
+                                                    {% for size in sizes %}
+                                                    <option value="{{ size }}">{{size}}</option>
+                                                    {% endfor%}
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="form-row">
+                                            <div class="col-md-12 mb-3">
+                                                <input class="form-control" type="number" id="sicilian_num" name="num"
+                                                    placeholder="1" min="1" max="50">
+                                            </div>
+                                        </div>
+                                        <div class="form-row">
+                                            <div class="col-md-6 mb-3">
+                                                <button class="btn btn-secondary" id="add_sicilian_pizza_button">add
+                                                    to cart</button>
+                                            </div>
+                                        </div>
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xs-12 col-md-6">
+                    <div class="card mb-3">
+                        <div class="row no-gutters">
+                            <div class="col-md-4">
+                                <img src="{% static 'orders/images/sub_order_view.jpg' %}" class="card-img" alt="...">
+                            </div>
+                            <div class="col-md-8">
+                                <div class="card-body">
+                                    <h5 class="card-title">Subs</h5>
+                                    <p class="card-text">
+                                        <div class="form-row">
+                                            <div class="col-md-6 mb-3">
+                                                <select class="custom-select mr-sm-2" id="sub" name="sub">
+                                                    {% for sub in subs %}
+                                                    <option value="{{ sub.ingredients }}">
+                                                        {{ sub.ingredients }}
+                                                    </option>
+                                                    {% endfor%}
+                                                </select>
+                                            </div>
+                                            <div class="col-md-6 mb-3">
+                                                <select class="custom-select mr-sm-2" name="size" id="sub_size">
+                                                    {% for size in sizes %}
+                                                    <option value="{{ size }}">{{size}}</option>
+                                                    {% endfor%}
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="form-row">
+                                            <div class="col-md-6 mb-3">
+                                                <input class="form-control" type="number" name="num" placeholder="1"
+                                                    id="sub_qnt" min="1" max="50">
+                                            </div>
+                                            <div class="col-md-6 mb-3">
+                                                <select class="custom-select mr-sm-2" name="extra">
+                                                    <option value="none">no extra</option>
+                                                    {% for extra in extras %}
+                                                    <option value="{{ extra.extra }}">{{extra.extra}}
+                                                        {{extra.price}}</option>
+                                                    {% endfor%}
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="form-row">
+                                            <div class="col-md-6 mb-3">
+                                                <button class="btn btn-secondary" id="add_sub" type="submit">add to
+                                                    cart</button>
+                                            </div>
+                                        </div>
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xs-12 col-md-6">
+                    <div class="card mb-3">
+                        <div class="row no-gutters">
+                            <div class="col-md-4">
+                                <img src="{% static 'orders/images/pasta_order_view.jpg' %}" class="card-img" alt="...">
+                            </div>
+                            <div class="col-md-8">
+                                <div class="card-body">
+                                    <h5 class="card-title">Pasta</h5>
+                                    <p class="card-text">
+                                        <div class="form-row">
+                                            <div class="col-md-12 mb-3">
+                                                <select class="custom-select mr-sm-2" id="pasta" name="pasta">
+                                                    {% for pasta in pastas %}
+                                                    <option value="{{ pasta.ingredients}}">{{pasta}}
+                                                        {{pasta.price}}
+                                                    </option>
+                                                    {% endfor%}
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="form-row">
+                                            <div class="col-md-12 mb-3">
+                                                <input class="form-control" type="number" name="num" placeholder="1"
+                                                    id="pasta_qnt" min="1" max="50">
+                                            </div>
+                                        </div>
+                                        <div class="form-row">
+                                            <div class="col-md-6 mb-3">
+                                                <button class="btn btn-secondary" type="submit" id="add_pasta">add to
+                                                    cart</button>
+                                            </div>
+                                        </div>
+
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row" id="dinner_salad">
+                <div class="col-xs-12 col-md-6">
+                    <div class="card mb-3">
+                        <div class="row no-gutters">
+                            <div class="col-md-4">
+                                <img src="{% static 'orders/images/dinner_order_view.jpg' %}" class="card-img" alt="...">
+                            </div>
+                            <div class="col-md-8">
+                                <div class="card-body">
+                                    <h5 class="card-title">Dinner Platters</h5>
+                                    <p class="card-text">
+                                        <div class="form-row">
+                                            <div class="col-md-6 mb-3">
+                                                <select class="custom-select mr-sm-2" id="dinner" name="dinner">
+                                                    {% for dinner in dinnerPlates %}
+                                                    <option value="{{ dinner }}">{{ dinner}}</option>
+                                                    {% endfor%}
+                                                </select>
+                                            </div>
+                                            <div class="col-md-6 mb-3">
+                                                <select class="custom-select mr-sm-2" name="size" id="dinner_size">
+                                                    {% for size in sizes %}
+                                                    <option value="{{ size }}">{{size}}</option>
+                                                    {% endfor%}
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="form-row">
+                                            <div class="col-md-12 mb-3">
+                                                <input class="form-control" type="number" name="num" placeholder="1"
+                                                    id="dinner_qnt" min="1" max="50">
+                                            </div>
+                                        </div>
+                                        <div class="form-row">
+                                            <div class="col-md-6 mb-3">
+                                                <button class="btn btn-secondary" type="submit" id="add_dinner">add to
+                                                    cart</button>
+                                            </div>
+                                        </div>
+                                        </form>
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xs-12 col-md-6">
+                    <div class="card mb-3">
+                        <div class="row no-gutters">
+                            <div class="col-md-4">
+                                <img src="{% static 'orders/images/salad_order_view.jpg' %}" class="card-img" alt="...">
+                            </div>
+                            <div class="col-md-8">
+                                <div class="card-body">
+                                    <h5 class="card-title">Salad</h5>
+                                    <p class="card-text">
+                                        <div class="form-row">
+                                            <div class="col-md-12 mb-3">
+                                                <select class="custom-select mr-sm-2" id="salad" name="salad" id="salad">
+                                                    {% for salad in salads %}
+                                                    <option value="{{ salad }}">{{salad}} {{salad.price}}
+                                                    </option>
+                                                    {% endfor%}
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="form-row">
+                                            <div class="col-md-12 mb-3">
+                                                <input class="form-control" type="number" name="num" placeholder="1"
+                                                    id="salad_qnt" min="1" max="50">
+                                            </div>
+                                        </div>
+                                        <div class="form-row">
+                                            <div class="col-md-6 mb-3">
+                                                <button class="btn btn-secondary" type="submit" id="add_salad">add to
+                                                    cart</button>
+                                            </div>
+                                        </div>
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xs-12 col-md-4">
+            <div class="container" id="cart">
+                <h1 id="username_cart_div">Hello, {{ user.username }}</h1>
+                <div class="row" id="cart_row">
+                    <div class="col-xs-6 items_div" id="cart_items_div">
+                        {%for item in items%}
+                        <div class="{{item.id}}_item_div">
+                            <div style="margin-top: 5px;">{{item.quantity}}x {{item.content_object}} US$ {{item.price}}
+                                <button class="trash" id="{{item.id}}" onclick="deleteItem(this.id)">
+                                    <svg class="bi bi-trash" width="1.5em " height="1em" viewBox="0 0 16 16" fill="white"
+                                        xmlns="http://www.w3.org/2000/svg">
+                                        <path
+                                            d="M5.5 5.5A.5.5 0 016 6v6a.5.5 0 01-1 0V6a.5.5 0 01.5-.5zm2.5 0a.5.5 0 01.5.5v6a.5.5 0 01-1 0V6a.5.5 0 01.5-.5zm3 .5a.5.5 0 00-1 0v6a.5.5 0 001 0V6z" />
+                                        <path fill-rule="evenodd"
+                                            d="M14.5 3a1 1 0 01-1 1H13v9a2 2 0 01-2 2H5a2 2 0 01-2-2V4h-.5a1 1 0 01-1-1V2a1 1 0 011-1H6a1 1 0 011-1h2a1 1 0 011 1h3.5a1 1 0 011 1v1zM4.118 4L4 4.059V13a1 1 0 001 1h6a1 1 0 001-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"
+                                            clip-rule="evenodd" />
+                                    </svg>
+                                </button>
+                            </div>
+                            <div class="size_div">{% if item.extras != None %}{{item.extras}} {% endif %}</div>
+                            <div class="size_div">{% if item.size != None %}size: {{item.size}} {% endif %}</div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                <div>
+                </div>
+                <div class="row" id="total_div">
+                    <h1 id="total">US$ <span class="totalPrice">{{totalPrice}}</span></h1>
+                    <input type="button" class="btn btn-dark" data-toggle="modal" data-target="#checkoutModal"
+                        value="checkout" id="checkout_button">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+{% endblock%}
